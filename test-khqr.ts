@@ -1,0 +1,1 @@
+import { BakongKHQR } from 'bakong-khqr'; const khqr = new BakongKHQR(); const res = khqr.generateIndividual({ bakongAccountID: 'user@bakong', merchantName: 'Store', merchantCity: 'Phnom Penh', acquiringBank: 'Bakong', currency: 116, amount: 60000 }); console.log(JSON.stringify(res));
