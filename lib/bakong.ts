@@ -33,10 +33,9 @@ export async function generateKhqrPayment(payment: PaymentRequest) {
 
   const individualInfo = new IndividualInfo(
     accountId,
-    requestCurrency,
-    "Tithearin Noeun", // Replaced from generic 'Subscription Plan'
+    "Tithearin Noeun",
     "Phnom Penh",
-    optionalData
+    optionalData       // contains currency, amount, billNumber, etc.
   );
 
   const khqr = new BakongKHQR();
