@@ -9,7 +9,7 @@ export default function SubscriptionPage() {
 
   const plan = {
     name: "Pro Plan",
-    price: 0.03, // $5.00
+    price: 1, // $1.00
   };
 
   const handleSubscribe = async () => {

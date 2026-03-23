@@ -1,7 +1,8 @@
 // lib/bakong.ts
 
 interface PaymentRequest {
-  amount: number; // in KHR
+  amount: number;
+  currency?: "USD" | "KHR";
   description: string;
   merchantId: string;
   accountNumber?: string;
@@ -15,22 +16,25 @@ export async function generateKhqrPayment(payment: PaymentRequest) {
   const IndividualInfo = bakongKhqrModule.IndividualInfo;
   const khqrData = bakongKhqrModule.khqrData;
 
+  const requestCurrency = payment.currency === "USD" ? khqrData.currency.usd : khqrData.currency.khr;
+
   const optionalData = {
-    currency: khqrData.currency.khr,
+    currency: requestCurrency,
     amount: payment.amount,
     billNumber: payment.transactionRef,
     storeLabel: "Bakong Subscription", 
     terminalLabel: "Bakong Web Checkout",
     merchantCategoryCode: "5999",
+    expirationTimestamp: Date.now() + (15 * 60 * 1000), 
   };
 
   // merchantId will use the process.env.BAKONG_MERCHANT_ID provided from the route
-  const accountId = payment.merchantId || "so_sereysokbotra@bkrt";
+  const accountId = payment.merchantId || "tithearin_noeun@bkrt";
 
   const individualInfo = new IndividualInfo(
     accountId,
-    khqrData.currency.khr,
-    "Serey Sokbotra", // Replaced from generic 'Subscription Plan'
+    requestCurrency,
+    "Tithearin Noeun", // Replaced from generic 'Subscription Plan'
     "Phnom Penh",
     optionalData
   );

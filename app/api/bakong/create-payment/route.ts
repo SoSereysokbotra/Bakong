@@ -4,13 +4,14 @@ import { generateKhqrPayment } from "../../../../lib/bakong";
 type Plan = {
   id: string;
   name: string;
-  amountKHR: number;
+  amount: number;
+  currency: "USD" | "KHR";
 };
 
 const plans: Record<string, Plan> = {
-  basic: { id: "basic", name: "Starter", amountKHR: 100 },
-  pro: { id: "pro", name: "Professional", amountKHR: 100 },
-  premium: { id: "premium", name: "Enterprise", amountKHR: 100 },
+  basic: { id: "basic", name: "Starter", amount: 1, currency: "USD" },
+  pro: { id: "pro", name: "Professional", amount: 1, currency: "USD" },
+  premium: { id: "premium", name: "Enterprise", amount: 1, currency: "USD" },
 };
 
 export async function POST(request: Request) {
@@ -22,12 +23,15 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Invalid plan" }, { status: 400 });
     }
 
+    const finalAmount = plan.amount;
+
     // Generate a unique transaction reference
     const transactionRef = `SUB_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`;
 
     // Generate KHQR payload (or call Bakong API)
     const payment = await generateKhqrPayment({
-      amount: plan.amountKHR,
+      amount: finalAmount,
+      currency: plan.currency,
       description: `${plan.name} Subscription - ${transactionRef}`,
       merchantId: process.env.BAKONG_MERCHANT_ID || "",
       transactionRef,
@@ -36,7 +40,8 @@ export async function POST(request: Request) {
     return NextResponse.json({
       transactionId: payment.transactionId,
       qrString: payment.qrString,
-      amount: plan.amountKHR,
+      amount: finalAmount,
+      currency: plan.currency,
       planName: plan.name,
     }, { status: 200 });
   } catch (error) {
